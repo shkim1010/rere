@@ -2,17 +2,22 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8" />
-  <title>시간표 및 수행평가</title>
+  <title>학교 시간표 웹 - 로그인 / 회원가입</title>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&family=Playfair+Display:wght@700&display=swap');
+
     html, body {
       margin: 0; padding: 0; height: 100%;
       background: linear-gradient(135deg, #fdf6f0, #f7e8dc);
       font-family: 'Montserrat', sans-serif;
       color: #4b3b2b;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
       box-sizing: border-box;
+    }
+    body {
       display: flex; justify-content: center; align-items: flex-start;
-      padding: 40px 20px;
+      min-height: 100vh; padding: 40px 20px;
     }
     .container {
       background-color: #fffdfa;
@@ -22,208 +27,155 @@
       max-width: 95vw;
       padding: 48px 36px;
       box-sizing: border-box;
-      display: flex; flex-direction: column; align-items: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
     }
     h1 {
+      font-family: 'Playfair Display', serif;
       font-weight: 700;
+      color: #6a4f4b;
       margin-bottom: 32px;
-      font-size: 28px;
       text-align: center;
       letter-spacing: 0.05em;
     }
-    table {
-      border-collapse: separate;
-      border-spacing: 0;
-      border-radius: 20px;
-      overflow: hidden;
+    input[type="text"], input[type="password"] {
       width: 100%;
-      margin-top: 32px;
+      padding: 16px 20px;
+      margin-bottom: 20px;
       font-size: 18px;
-      color: #6a4f4b;
-      box-shadow: 0 12px 30px rgba(168,126,111,0.15);
-      background-color: #fffdfa;
+      font-weight: 500;
+      color: #4b3b2b;
+      background-color: #f9f5f1;
+      border: 2px solid #d8cfc6;
+      border-radius: 16px;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+      outline: none;
+      box-sizing: border-box;
     }
-    thead tr {
+    input[type="text"]:focus, input[type="password"]:focus {
+      border-color: #a87e6f;
+      outline: none;
+      box-shadow: 0 0 10px rgba(168,126,111,0.5);
+      background: #fff;
+    }
+    button {
+      width: 100%;
+      padding: 18px 0;
       background: #a87e6f;
       color: #fffdfa;
       font-weight: 700;
-      letter-spacing: 0.05em;
-    }
-    thead th {
-      padding: 18px 16px;
-      text-align: center;
-    }
-    tbody td {
-      padding: 14px 16px;
-      background-color: #f6f1ec;
-      text-align: center;
-      font-weight: 600;
-      border-bottom: 1px solid #d8cfc6;
-    }
-    tbody tr:hover {
-      background-color: #ede5dd;
-    }
-    ul.task-list {
-      margin-top: 32px;
-      padding-left: 24px;
-      color: #856451;
-      font-weight: 700;
       font-size: 18px;
-      line-height: 1.5;
-      list-style-type: disc;
+      border: none;
+      border-radius: 18px;
+      cursor: pointer;
+      box-shadow: 0 10px 25px rgba(168,126,111,0.5);
+      transition: background 0.4s ease, box-shadow 0.4s ease;
+      margin-bottom: 12px;
+    }
+    button:hover {
+      background: #856451;
+      box-shadow: 0 12px 30px rgba(133,100,81,0.7);
+    }
+    #signupForm {
+      display: none;
+      width: 100%;
+      margin-top: 20px;
+    }
+    #showSignupBtn {
+      width: auto;
+      padding: 8px 20px;
+      background: transparent;
+      color: #a87e6f;
+      font-weight: 600;
+      font-size: 14px;
+      box-shadow: none;
+      border: 2px solid #a87e6f;
+      border-radius: 14px;
+      cursor: pointer;
+      transition: background 0.3s ease, color 0.3s ease;
+      margin-top: 0;
+      text-align: center;
+    }
+    #showSignupBtn:hover {
+      background: #a87e6f;
+      color: #fffdfa;
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <h1 id="classTitle">시간표 및 수행평가</h1>
-    <div id="schedule"></div>
+    <h1>로그인</h1>
+
+    <input id="loginId" type="text" placeholder="아이디" />
+    <input id="loginPw" type="password" placeholder="비밀번호" />
+    <button onclick="login()">로그인</button>
+
+    <button id="showSignupBtn" onclick="toggleSignup()">회원가입</button>
+
+    <div id="signupForm">
+      <h1>회원가입</h1>
+      <input id="signupId" type="text" placeholder="아이디" />
+      <input id="signupPw" type="password" placeholder="비밀번호" />
+      <input id="signupClass" type="text" placeholder="학년-반 (예: 1-3)" />
+      <button onclick="signup()">회원가입 완료</button>
+    </div>
   </div>
 
   <script>
-    // 로그인 체크
-    const loggedInUser = localStorage.getItem('loggedInUser');
-    if (!loggedInUser) {
-      alert('로그인이 필요합니다.');
-      window.location.href = 'index.html';
-    }
-
-    // 반 정보 가져오기
-    const selectedClass = localStorage.getItem('selectedClass');
-    if (!selectedClass) {
-      alert('반 정보가 없습니다. 다시 로그인 해주세요.');
-      window.location.href = 'index.html';
-    }
-
-    document.getElementById('classTitle').textContent = `${selectedClass} 반 시간표`;
-
-    // 시간표 데이터
-const timetable = {
-      "1-1": {
-        "월요일": ["자율", "역사", "과4", "수1", "사4", "체육", "영3"],
-        "화요일": ["수1", "역사", "영2", "과3", "국2", "음악", "사2"],
-        "수요일": ["사1", "국1", "영1", "수2", "실험", "진2"],
-        "목요일": ["수1", "국3", "과1", "체육", "진1", "영4"],
-        "금요일": ["사3", "음악", "과2", "역사", "국4", "창체"]
-      },
-      "1-2": {
-        "월요일": ["자율", "영4", "음악", "영3", "과2", "수1", "국1"],
-        "화요일": ["사2", "수1", "진1", "역사", "사1", "국4", "과3"],
-        "수요일": ["사3", "음악", "수1", "영1", "역사", "국2"],
-        "목요일": ["실험", "체육", "수2", "진2", "과1", "역사"],
-        "금요일": ["영2", "국3", "사4", "과4", "체육", "창체"]
-      },
-      "1-3": {
-        "월요일": ["자율", "국2", "과3", "실험", "영3", "사4", "역사"],
-        "화요일": ["역사", "과1", "음악", "수1", "진1", "국3", "영2"],
-        "수요일": ["체육", "역사", "음악", "사2", "수1", "영1"],
-        "목요일": ["영4", "사3", "수2", "과4", "국4", "체육"],
-        "금요일": ["국1", "사1", "진2", "수1", "과2", "창체"]
-      },
-      "1-4": {
-        "월요일": ["자율", "사3", "영2", "국4", "역사", "음악", "수1"],
-        "화요일": ["진1", "영1", "사4", "국1", "음악", "수1", "실험"],
-        "수요일": ["수1", "체육", "과3", "국3", "사1", "과2"],
-        "목요일": ["역사", "과1", "국2", "사2", "수2", "영3"],
-        "금요일": ["체육", "역사", "과4", "영4", "진2", "창체"]
-      },
-      "1-5": {
-        "월요일": ["자율", "과1", "체육", "수2", "사2", "국4", "국3"],
-        "화요일": ["사3", "영4", "영3", "진2", "체육", "역사", "과2"],
-        "수요일": ["실험", "진1", "영2", "사4", "국1", "수1"],
-        "목요일": ["사1", "국2", "역사", "수1", "음악", "과4"],
-        "금요일": ["역사", "수1", "영1", "음악", "과3", "창체"]
-      },
-      "1-6": {
-        "월요일": ["자율", "사2", "수1", "역사", "실험", "과2", "과3"],
-        "화요일": ["국4", "국2", "진2", "영3", "영4", "미술", "사1"],
-        "수요일": ["사4", "수1", "역사", "수2", "미술", "과4"],
-        "목요일": ["체육", "영1", "진1", "역사", "국3", "수1"],
-        "금요일": ["과1", "영2", "사3", "체육", "국1", "창체"]
-      },
-      "1-7": {
-        "월요일": ["자율", "수1", "진1", "사1", "체육", "국1", "역사"],
-        "화요일": ["체육", "영3", "과2", "국3", "수1", "사3", "역사"],
-        "수요일": ["영4", "실험", "국2", "수1", "과4", "미술"],
-        "목요일": ["사4", "수2", "역사", "국4", "영2", "과3"],
-        "금요일": ["영1", "진2", "과1", "미술", "사2", "창체"]
-      },
-      "1-8": {
-        "월요일": ["자율", "진1", "미술", "사3", "국3", "과3", "영3"],
-        "화요일": ["과2", "사4", "체육", "실험", "역사", "수2", "국1"],
-        "수요일": ["진2", "미술", "역사", "국2", "과1", "수1"],
-        "목요일": ["과4", "영4", "수1", "영1", "체육", "사1"],
-        "금요일": ["수2", "수1", "국4", "영2", "역사", "창체"]
-      },
-      "1-9": {
-        "월요일": ["자율", "체육", "국4", "수1", "영4", "사3", "과1"],
-        "화요일": ["국2", "역사", "사2", "미술", "실험", "수2", "국1"],
-        "수요일": ["국1", "수2", "사1", "영3", "진1", "역사"],
-        "목요일": ["국3", "영2", "과2", "수1", "미술", "진2"],
-        "금요일": ["역사", "체육", "과3", "영1", "사4", "창체"]
-      },
-     "1-10": {
-        "월요일": ["자율", "수1", "사1", "과1", "영2", "역사", "체육"],
-        "화요일": ["미술", "실험", "국1", "역사", "사4", "영1", "체육"],
-        "수요일": ["영3", "국3", "미술", "과2", "수3", "수1"],
-        "목요일": ["수1", "진2", "사2", "과3", "영4", "국4"],
-        "금요일": ["과4", "진1", "역사", "국2", "수2", "창체"]
+    function toggleSignup() {
+      const form = document.getElementById('signupForm');
+      if (form.style.display === 'none' || form.style.display === '') {
+        form.style.display = 'block';
+      } else {
+        form.style.display = 'none';
       }
-   };
+    }
 
-    // 수행평가 일정
-    const tasks = {
-      "1-1": ["국어 수행평가: 6월 10일", "수학 수행평가: 7월 15일"],
-      // 다른 반 추가 가능
-    };
+    function signup() {
+      const id = document.getElementById('signupId').value.trim();
+      const pw = document.getElementById('signupPw').value.trim();
+      const userClass = document.getElementById('signupClass').value.trim();
 
-    const container = document.getElementById('schedule');
-
-    // 요일별 최대 교시수 설정
-    const maxPeriodsPerDay = {
-      "월요일": 7,
-      "화요일": 7,
-      "수요일": 6,
-      "목요일": 6,
-      "금요일": 6
-    };
-
-    if (timetable[selectedClass]) {
-      let tableHTML = `<table><thead><tr><th>교시/요일</th>`;
-      const days = ["월요일", "화요일", "수요일", "목요일", "금요일"];
-      days.forEach(day => {
-        tableHTML += `<th>${day}</th>`;
-      });
-      tableHTML += `</tr></thead><tbody>`;
-
-      // 최대 교시 수: 7 (월,화 기준)
-      const maxPeriod = 7;
-
-      for (let period = 0; period < maxPeriod; period++) {
-        tableHTML += `<tr><td>${period + 1}교시</td>`;
-        days.forEach(day => {
-          if (period < maxPeriodsPerDay[day]) {
-            const subject = timetable[selectedClass][day] ? timetable[selectedClass][day][period] || "" : "";
-            tableHTML += `<td>${subject}</td>`;
-          } else {
-            tableHTML += `<td></td>`;
-          }
-        });
-        tableHTML += `</tr>`;
+      if (!id || !pw || !userClass) {
+        alert('아이디, 비밀번호, 학년-반 모두 입력하세요.');
+        return;
       }
 
-      tableHTML += `</tbody></table>`;
-      container.innerHTML += tableHTML;
-    } else {
-      container.innerHTML += "<p>시간표가 없습니다.</p>";
+      let users = JSON.parse(localStorage.getItem('users') || '{}');
+
+      if (users[id]) {
+        alert('이미 존재하는 아이디입니다.');
+        return;
+      }
+
+      users[id] = { password: pw, class: userClass };
+      localStorage.setItem('users', JSON.stringify(users));
+
+      localStorage.setItem('loggedInUser', id);
+      localStorage.setItem('selectedClass', userClass);
+
+      alert('회원가입 완료! 바로 반 시간표 페이지로 이동합니다.');
+
+      window.location.href = 'schedule.html';
     }
 
-    if (tasks[selectedClass]) {
-      container.innerHTML += "<ul class='task-list'>";
-      tasks[selectedClass].forEach(task => {
-        container.innerHTML += `<li>${task}</li>`;
-      });
-      container.innerHTML += "</ul>";
+    function login() {
+      const id = document.getElementById('loginId').value.trim();
+      const pw = document.getElementById('loginPw').value.trim();
+
+      let users = JSON.parse(localStorage.getItem('users') || '{}');
+
+      if (users[id] && users[id].password === pw) {
+        localStorage.setItem('loggedInUser', id);
+        localStorage.setItem('selectedClass', users[id].class);
+
+        alert('로그인 성공! 자기 반 페이지로 이동합니다.');
+
+        window.location.href = 'schedule.html';
+      } else {
+        alert('아이디 또는 비밀번호가 틀렸습니다.');
+      }
     }
   </script>
 </body>
